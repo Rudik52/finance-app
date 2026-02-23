@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Finance App</title>
+  <script src="https://apis.google.com/js/api.js"></script>
+</head>
+<body>
+
+<h2>Personal Finance Tracker</h2>
+
+<button onclick="authenticate()">Login</button>
+
+<h3>Add Transaction</h3>
+
+<input type="date" id="date"><br>
+<select id="type">
+  <option value="Income">Income</option>
+  <option value="Expense">Expense</option>
+</select><br>
+
+<input type="text" id="category" placeholder="Category"><br>
+<input type="text" id="description" placeholder="Description"><br>
+<input type="number" id="amount" placeholder="Amount"><br>
+
+<button onclick="addTransaction()">Add</button>
+
+<script>
+
+const CLIENT_ID = "56126764070-e7to8fu5epphcbnpb377mbjf124pr3tj.apps.googleusercontent.com";
+const API_KEY = "";
+const SPREADSHEET_ID = "1cH-5GZmEdhTAI-768QAHA46vc4-ENXQEmfeMLJAmN8Q";
+
+function authenticate() {
+  gapi.load('client:auth2', () => {
+    gapi.client.init({
+      clientId: CLIENT_ID,
+      scope: 'https://www.googleapis.com/auth/spreadsheets'
+    }).then(() => {
+      return gapi.auth2.getAuthInstance().signIn();
+    });
+  });
+}
+
+function addTransaction() {
+  const values = [[
+    document.getElementById("date").value,
+    document.getElementById("type").value,
+    document.getElementById("category").value,
+    document.getElementById("description").value,
+    document.getElementById("amount").value
+  ]];
+
+  gapi.client.sheets.spreadsheets.values.append({
+    spreadsheetId: SPREADSHEET_ID,
+    range: "Transactions!A:E",
+    valueInputOption: "USER_ENTERED",
+    resource: { values: values }
+  }).then(response => {
+    alert("Transaction Added!");
+  });
+}
+
+</script>
+
+</body>
+</html>
+
+//Replace:
+
+//YOUR_CLIENT_ID_HERE
+
+//YOUR_SPREADSHEET_ID_HERE
